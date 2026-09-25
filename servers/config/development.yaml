@@ -1,0 +1,12 @@
+logger:
+  enable: false
+  level: error
+  format: compact
+
+server:
+  binding: 127.0.0.1
+  port: 8080
+  host: http://localhost
+
+workers:
+  mode: ForegroundBlocking
