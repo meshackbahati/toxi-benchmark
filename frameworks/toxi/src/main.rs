@@ -10,6 +10,9 @@ use std::io::Write;
 use std::sync::Arc;
 use toxi::prelude::*;
 
+#[global_allocator]
+static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
 #[derive(serde::Deserialize, Clone)]
 struct Item {
     id: i64,
