@@ -21,9 +21,12 @@ jobs:
           items=[{'id':i+1,'name':f'Item {i+1}','category':'x','price':100+i,'quantity':1+(i%5),'active':True,'tags':['a'],'rating':{'score':40,'count':100}} for i in range(50)]
           open('/tmp/dataset.json','w').write(json.dumps(items))
           EOF
-          docker run -d --name arena -p 8080:8080 \
+          openssl req -x509 -newkey rsa:2048 -keyout /tmp/server.key -out /tmp/server.crt -days 2 -nodes -subj "/CN=localhost" 2>/dev/null
+          docker run -d --name arena -p 8080:8080 -p 8081:8081 \
             -e DATASET_PATH=/data/dataset.json \
-            -v /tmp/dataset.json:/data/dataset.json:ro toxi-arena
+            -v /tmp/dataset.json:/data/dataset.json:ro \
+            -v /tmp/server.crt:/certs/server.crt:ro \
+            -v /tmp/server.key:/certs/server.key:ro toxi-arena
           sleep 5
           docker logs arena 2>&1 | tail -3
       - name: Validate endpoints
@@ -36,6 +39,7 @@ jobs:
           curl -s http://127.0.0.1:8080/json/5?m=3 | grep -q '"count":5'
           curl -s -H 'Accept-Encoding: gzip' -D - -o /dev/null http://127.0.0.1:8080/json/5?m=3 | grep -qi 'content-encoding: gzip'
           printf '0123456789' | curl -s -X POST --data-binary @- http://127.0.0.1:8080/echo | grep -q '0123456789'
+          curl -sk https://127.0.0.1:8081/json/5?m=3 | grep -q '"count":5'
       - name: Stop container
         if: always()
         run: docker rm -f arena
