@@ -25,6 +25,7 @@ jobs:
             -e DATASET_PATH=/data/dataset.json \
             -v /tmp/dataset.json:/data/dataset.json:ro toxi-arena
           sleep 5
+          docker logs arena 2>&1 | tail -3
       - name: Validate endpoints
         run: |
           set -e

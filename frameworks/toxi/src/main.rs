@@ -176,7 +176,7 @@ async fn main() -> Result<()> {
     router.get("/delay/:ms", delay);
     router.post("/echo", echo_bytes);
     router.get("/json/:count", json_dataset);
-    let addr: std::net::SocketAddr = "127.0.0.1:8080".parse().unwrap();
+    let addr: std::net::SocketAddr = "0.0.0.0:8080".parse().unwrap();
     println!("toxi-arena listening on {addr}");
     Server::new(router).listen(addr).await
 }
