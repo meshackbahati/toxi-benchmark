@@ -1,0 +1,40 @@
+name: Arena image
+
+on:
+  push:
+    branches: [bench]
+  pull_request:
+    branches: [bench]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build arena image
+        run: docker build -t toxi-arena frameworks/toxi
+      - name: Start container with sample dataset
+        run: |
+          python3 - <<'EOF'
+          import json
+          items=[{'id':i+1,'name':f'Item {i+1}','category':'x','price':100+i,'quantity':1+(i%5),'active':True,'tags':['a'],'rating':{'score':40,'count':100}} for i in range(50)]
+          open('/tmp/dataset.json','w').write(json.dumps(items))
+          EOF
+          docker run -d --name arena -p 8080:8080 \
+            -e DATASET_PATH=/data/dataset.json \
+            -v /tmp/dataset.json:/data/dataset.json:ro toxi-arena
+          sleep 5
+      - name: Validate endpoints
+        run: |
+          set -e
+          [ "$(curl -s 'http://127.0.0.1:8080/baseline11?a=13&b=42')" = "55" ]
+          [ "$(curl -s -X POST -H 'content-type: text/plain' -d '20' 'http://127.0.0.1:8080/baseline11?a=13&b=42')" = "75" ]
+          [ "$(curl -s http://127.0.0.1:8080/pipeline)" = "ok" ]
+          [ "$(curl -s http://127.0.0.1:8080/delay/5)" = "5" ]
+          curl -s http://127.0.0.1:8080/json/5?m=3 | grep -q '"count":5'
+          curl -s -H 'Accept-Encoding: gzip' -D - -o /dev/null http://127.0.0.1:8080/json/5?m=3 | grep -qi 'content-encoding: gzip'
+          printf '0123456789' | curl -s -X POST --data-binary @- http://127.0.0.1:8080/echo | grep -q '0123456789'
+      - name: Stop container
+        if: always()
+        run: docker rm -f arena
