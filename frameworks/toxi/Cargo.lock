@@ -2994,7 +2994,7 @@ dependencies = [
  "quinn-udp",
  "rustc-hash",
  "rustls 0.23.45",
- "socket2 0.6.5",
+ "socket2 0.5.10",
  "thiserror 2.0.21",
  "tokio",
  "tracing",
@@ -3034,7 +3034,7 @@ dependencies = [
  "cfg_aliases",
  "libc",
  "once_cell",
- "socket2 0.6.5",
+ "socket2 0.5.10",
  "tracing",
  "windows-sys 0.61.2",
 ]
@@ -4152,7 +4152,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
 dependencies = [
  "fastrand",
- "getrandom 0.4.3",
+ "getrandom 0.3.4",
  "once_cell",
  "rustix",
  "windows-sys 0.61.2",
@@ -4574,9 +4574,9 @@ dependencies = [
 
 [[package]]
 name = "toxi-core"
-version = "3.1.7"
+version = "3.1.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dfb84d495a8da6012f20b10a5ec6a1712da71b65d13b7790bb6275fff6acf5f9"
+checksum = "acbca2b59c6b863704d71ec6d0f81dbe4cacdcef8e5a648e9a83ae42c7237306"
 dependencies = [
  "async-trait",
  "base64 0.22.1",
